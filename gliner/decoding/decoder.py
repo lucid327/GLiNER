@@ -46,7 +46,11 @@ class SpanDecoder(BaseDecoder):
             
             # Support for id_to_classes being a list of dictionaries
             id_to_class_i = id_to_classes[i] if isinstance(id_to_classes, list) else id_to_classes
-            
+
+            # Support for per-label thresholds
+            if isinstance(threshold, list):            
+                threshold = torch.tensor(threshold, dtype=probs_i.dtype, device=probs_i.device).view(1, 1, -1)
+
             wh_i = [i.tolist() for i in torch.where(probs_i > threshold)]
             span_i = []
             for s, k, c in zip(*wh_i):
@@ -59,6 +63,8 @@ class SpanDecoder(BaseDecoder):
 
 
 class TokenDecoder(BaseDecoder):
+    # TODO: Support for per-label thresholds
+    
     def get_indices_above_threshold(self, scores, threshold):
         scores = torch.sigmoid(scores)
         return [k.tolist() for k in torch.where(scores > threshold)]
