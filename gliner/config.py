@@ -22,6 +22,7 @@ class GLiNERConfig(PretrainedConfig):
                  max_types: int = 25,
                  max_len: int = 384,
                  words_splitter_type: str = "whitespace",
+                 neg_span_masking: str = None,
                  has_rnn: bool = True,
                  fuse_layers: bool = False,
                  embed_ent_token: bool = True,
@@ -69,6 +70,7 @@ class GLiNERConfig(PretrainedConfig):
         self.embed_ent_token = embed_ent_token
         self.ent_token = ent_token
         self.sep_token = sep_token
+        self.neg_span_masking=neg_span_masking
         self._attn_implementation = _attn_implementation
 
 # Register the configuration
