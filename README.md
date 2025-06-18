@@ -29,25 +29,36 @@ flowchart TB
         segmenter["segmenter"]
         Chunk["Chunk"]
   end
-    Chunk --> NER & Summarizer & Classifier & RE
-    Text --> Abstractor & segmenter
+ subgraph Aux["Auxiliary"]
+        IE["IE"]
+        QA["Q&A"]
+        Answer(["Answer"])
+  end
+    Chunk --> NER_Class & Summarization & Classification & KG & Aux
+    Text --> Abstraction & segmenter
     Label(["Label"]) --> NER
     NER --> Entity & Score
     Summarizer --> SentenceScore
-    SentenceScore --> Score
+    SentenceScore --Augments--> Score
     Class(["Class"]) --> Classifier
     Classifier -. result ≠ Others .-> NER & Summarizer
-    Entity --> Abstractor & RE
-    Score --> Abstractor
-    Relations --> Abstractor
+    Entity --> Abstraction & RE
+    Score --> Abstraction
+    Relations --> Abstraction
     Abstractor --> ReplacedText
     RelationRule(["Relation Rule"]) --> RE
     RE --> Relations
+    Text ~~~ NER_Class & Classification
     Classification ~~~ NER_Class & Summarization
     Summarization ~~~ NER_Class
-    NER_Class ~~~ KG
+    NER_Class ~~~ KG & Aux
     KG ~~~ Abstraction
     segmenter --> Chunk
+    DG(["Definitions &amp; Guildelines"]) --> Aux
+    IE --> Answer
+    QA --> Answer
+    Answer --Augments--> Score
+    Answer --> Abstraction
     Classifier@{ shape: h-cyl}
     Summarizer@{ shape: h-cyl}
     NER@{ shape: h-cyl}
@@ -55,6 +66,8 @@ flowchart TB
     ReplacedText@{ shape: tag-doc}
     Text@{ shape: doc}
     Chunk@{ shape: docs}
+    IE@{ shape: h-cyl}
+    QA@{ shape: h-cyl}
      SentenceScore:::Sky
      Entity:::Sky
      Score:::Sky
@@ -63,14 +76,16 @@ flowchart TB
      Text:::Rose
      Chunk:::Rose
      Chunk:::Sky
+     Answer:::Sky
      Label:::Rose
      Class:::Aqua
      RelationRule:::Aqua
-    classDef Aqua stroke-width:1px,stroke-dasharray:none,stroke:#46EDC8,fill:#DEFFF8,color:#378E7A
-    classDef Sky stroke-width:1px, stroke-dasharray:none, stroke:#374D7C, fill:#E2EBFF, color:#374D7C
+     DG:::Aqua
     classDef Rose stroke-width:1px, stroke-dasharray:none, stroke:#FF5978, fill:#FFDFE5, color:#8E2236
-    linkStyle 12 stroke:#D50000,fill:none
+    classDef Aqua stroke-width:1px, stroke-dasharray:none, stroke:#46EDC8, fill:#DEFFF8, color:#378E7A
+    classDef Sky stroke-width:1px, stroke-dasharray:none, stroke:#374D7C, fill:#E2EBFF, color:#374D7C
     linkStyle 13 stroke:#D50000,fill:none
+    linkStyle 14 stroke:#D50000,fill:none
 ```
 
 ---
