@@ -16,15 +16,21 @@ flowchart TB
         Entity(["Entity"])
         Score(["Score"])
   end
- subgraph s1["Knowledge Graph"]
+ subgraph KG["Knowledge Graph"]
         RE["RE"]
         Relations(["Relations"])
   end
  subgraph Abstraction["Abstraction"]
         Abstractor["Abstractor"]
-        ReplacedText(["Replaced Text"])
+        ReplacedText["Replaced Text"]
   end
-    Text(["Text"]) --> NER & Summarizer & Classifier & RE & Abstractor
+ subgraph Input["Text"]
+        Text["Text"]
+        segmenter["segmenter"]
+        Chunk["Chunk"]
+  end
+    Chunk --> NER & Summarizer & Classifier & RE
+    Text --> Abstractor & segmenter
     Label(["Label"]) --> NER
     NER --> Entity & Score
     Summarizer --> SentenceScore
@@ -39,27 +45,32 @@ flowchart TB
     RE --> Relations
     Classification ~~~ NER_Class & Summarization
     Summarization ~~~ NER_Class
-    NER_Class ~~~ s1
-    s1 ~~~ Abstraction
-    Classifier@{ shape: rect}
-    Summarizer@{ shape: rect}
-    NER@{ shape: rect}
-    RE@{ shape: rect}
+    NER_Class ~~~ KG
+    KG ~~~ Abstraction
+    segmenter --> Chunk
+    Classifier@{ shape: h-cyl}
+    Summarizer@{ shape: h-cyl}
+    NER@{ shape: h-cyl}
+    RE@{ shape: h-cyl}
+    ReplacedText@{ shape: tag-doc}
+    Text@{ shape: doc}
+    Chunk@{ shape: docs}
      SentenceScore:::Sky
      Entity:::Sky
      Score:::Sky
      Relations:::Sky
      ReplacedText:::Sky
      Text:::Rose
+     Chunk:::Rose
+     Chunk:::Sky
      Label:::Rose
      Class:::Aqua
      RelationRule:::Aqua
-    classDef Rose stroke-width:1px,stroke-dasharray:none,stroke:#FF5978,fill:#FFDFE5,color:#8E2236
     classDef Aqua stroke-width:1px,stroke-dasharray:none,stroke:#46EDC8,fill:#DEFFF8,color:#378E7A
     classDef Sky stroke-width:1px, stroke-dasharray:none, stroke:#374D7C, fill:#E2EBFF, color:#374D7C
-    linkStyle 11 stroke:#D50000,fill:none
-    linkStyle 12 stroke:#D50000
-
+    classDef Rose stroke-width:1px, stroke-dasharray:none, stroke:#FF5978, fill:#FFDFE5, color:#8E2236
+    linkStyle 12 stroke:#D50000,fill:none
+    linkStyle 13 stroke:#D50000,fill:none
 ```
 
 ---
