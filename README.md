@@ -1,3 +1,69 @@
+```mermaid
+---
+config:
+  layout: dagre
+---
+flowchart TB
+ subgraph Classification["Classification"]
+        Classifier["Classifier"]
+  end
+ subgraph Summarization["Summarization"]
+        Summarizer["Summarizer"]
+        SentenceScore(["Sentence Score"])
+  end
+ subgraph NER_Class["NER"]
+        NER["NER"]
+        Entity(["Entity"])
+        Score(["Score"])
+  end
+ subgraph s1["Knowledge Graph"]
+        RE["RE"]
+        Relations(["Relations"])
+  end
+ subgraph Abstraction["Abstraction"]
+        Abstractor["Abstractor"]
+        ReplacedText(["Replaced Text"])
+  end
+    Text(["Text"]) --> NER & Summarizer & Classifier & RE & Abstractor
+    Label(["Label"]) --> NER
+    NER --> Entity & Score
+    Summarizer --> SentenceScore
+    SentenceScore --> Score
+    Class(["Class"]) --> Classifier
+    Classifier -. result ≠ Others .-> NER & Summarizer
+    Entity --> Abstractor & RE
+    Score --> Abstractor
+    Relations --> Abstractor
+    Abstractor --> ReplacedText
+    RelationRule(["Relation Rule"]) --> RE
+    RE --> Relations
+    Classification ~~~ NER_Class & Summarization
+    Summarization ~~~ NER_Class
+    NER_Class ~~~ s1
+    s1 ~~~ Abstraction
+    Classifier@{ shape: rect}
+    Summarizer@{ shape: rect}
+    NER@{ shape: rect}
+    RE@{ shape: rect}
+     SentenceScore:::Sky
+     Entity:::Sky
+     Score:::Sky
+     Relations:::Sky
+     ReplacedText:::Sky
+     Text:::Rose
+     Label:::Rose
+     Class:::Aqua
+     RelationRule:::Aqua
+    classDef Rose stroke-width:1px,stroke-dasharray:none,stroke:#FF5978,fill:#FFDFE5,color:#8E2236
+    classDef Aqua stroke-width:1px,stroke-dasharray:none,stroke:#46EDC8,fill:#DEFFF8,color:#378E7A
+    classDef Sky stroke-width:1px, stroke-dasharray:none, stroke:#374D7C, fill:#E2EBFF, color:#374D7C
+    linkStyle 11 stroke:#D50000,fill:none
+    linkStyle 12 stroke:#D50000
+
+```
+
+---
+
 # 👑 GLiNER: Generalist and Lightweight Model for Named Entity Recognition
 
 GLiNER is a Named Entity Recognition (NER) model capable of identifying any entity type using a bidirectional transformer encoder (BERT-like). It provides a practical alternative to traditional NER models, which are limited to predefined entities, and Large Language Models (LLMs) that, despite their flexibility, are costly and large for resource-constrained scenarios.
