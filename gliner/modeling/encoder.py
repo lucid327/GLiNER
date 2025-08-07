@@ -62,6 +62,11 @@ class Transformer(nn.Module):
 
         config_name = encoder_config.__class__.__name__
 
+        if model_name in {'nomic-ai/nomic-embed-text-v2-moe'}:
+            self.moe = True
+        else:
+            self.moe = False
+
         kwargs = {}
         if config_name in DECODER_MODEL_MAPPING:
             if not IS_LLM2VEC:
@@ -75,9 +80,9 @@ class Transformer(nn.Module):
             ModelClass = T5EncoderModel
             if IS_TURBOT5:
                 kwargs = {"attention_type": 'flash'}
-        elif config_name in {'DebertaV2Config'}:
-            custom = True
-            ModelClass = DebertaV2Model
+        # elif config_name in {'DebertaV2Config'}:
+        #     custom = True
+        #     ModelClass = DebertaV2Model
         else:
             custom = False
             ModelClass = AutoModel
@@ -115,8 +120,14 @@ class Transformer(nn.Module):
             output_hidden_states = True
         else:
             output_hidden_states = False
-        output = self.model(*args, output_hidden_states = output_hidden_states, 
-                                            return_dict = True,  **kwargs)
+
+        if self.moe:
+            output = self.model(*args, # output_hidden_states = output_hidden_states,
+                                return_dict = True,  **kwargs)
+        else:
+            output = self.model(*args, output_hidden_states = output_hidden_states,
+                                return_dict = True,  **kwargs)
+
         if self.config.fuse_layers:
             encoder_layer = self.layers_fuser(output.hidden_states)
         else:
