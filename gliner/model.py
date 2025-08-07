@@ -52,6 +52,7 @@ class GLiNER(nn.Module, PyTorchModelHubMixin):
 
         if tokenizer is None and data_processor is None:
             tokenizer = AutoTokenizer.from_pretrained(config.model_name, cache_dir=cache_dir)
+        self.tokenizer = tokenizer
 
         if words_splitter is None and data_processor is None:
             words_splitter = WordsSplitter(config.words_splitter_type)
